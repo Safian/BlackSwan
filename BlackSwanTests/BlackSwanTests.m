@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+#import "NetworkManager.h"
+#import "RSSManager.h"
 
 @interface BlackSwanTests : XCTestCase
 
@@ -17,24 +19,43 @@
 
 - (void)setUp {
     [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
+     NSLog(@"%@ setUp", self.name);
 }
 
 - (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
 
-- (void)testExample {
-    // This is an example of a functional test case.
-    XCTAssert(YES, @"Pass");
+- (void)testDowloadRandomCatImage {
+    
+    NSLog(@"%@ testDowloadRandomCatImage", self.name);
+    __block BOOL waitingForBlock = YES;
+    [[NetworkManager sharedInstance] dowloadRandomCatImageCompletion:^(UIImage *image) {
+        XCTAssertNotNil(image, @"Cannot download the image");
+        waitingForBlock = NO;
+    }];
+    // Run the loop
+    while(waitingForBlock) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
 }
 
-- (void)testPerformanceExample {
-    // This is an example of a performance test case.
-    [self measureBlock:^{
-        // Put the code you want to measure the time of here.
+- (void)testRSSManager {
+    
+    NSLog(@"%@ testRSSManager", self.name);
+    
+    __block BOOL waitingForBlock = YES;
+    [[RSSManager sharedInstance] dowloadRSSItems:^(NSArray *rssItems) {
+        XCTAssertNotNil(rssItems, @"Cannot download the rss data");
+        waitingForBlock = NO;
+        NSLog(@"rssItems: %@", rssItems);
     }];
+    // Run the loop
+    while(waitingForBlock) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+                                 beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+    }
 }
 
 @end

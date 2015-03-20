@@ -76,7 +76,7 @@ typedef void (^RSSCompletionBlock)(NSArray *rssItems);
 - (void)parser:(NSXMLParser *)parser foundCharacters:(NSString *)string {
     
     if ([element isEqualToString:@"title"]) {
-        [title appendString:string];
+        [title appendString:[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
     } else if ([element isEqualToString:@"link"]) {
         [link appendString:[string stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
     }
